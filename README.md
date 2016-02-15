@@ -1,6 +1,6 @@
 # Guide_Rancher_Monitoring
 Easy to follow guide on how to deploy and make the best use of the Rancher community catalog template for Prometheus.
-![Catalog Entry](https://github.com/Rucknar/Guide_Rancher_Monitoring/catalog-screen.png "Catalog Entry")
+![Catalog Entry](https://github.com/Rucknar/Guide_Rancher_Monitoring/blob/master/catalog-screen.png "Catalog Entry")
 
 ### Objectives
 
@@ -32,7 +32,7 @@ In this deployment the following technologies are utilised to make this as usefu
 Log into your Rancher instance, make sure your in the correct environment and click the API button along the top of the page.
 Click on 'Add Key' and you should be presented with a box similar to the below, record down the details somewhere safe.
 
-![API Screen](https://github.com/Rucknar/Guide_Rancher_Monitoring/API-Key.png "Creating a new API Key")
+![API Screen](https://github.com/Rucknar/Guide_Rancher_Monitoring/blob/master/API-Key.png "Creating a new API Key")
 
 
 ### Configuring Rancher Graphite Support
