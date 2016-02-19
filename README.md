@@ -24,25 +24,40 @@ In this deployment the following technologies are utilised:
 * **Grafana** - Used to visualise the data from Prometheus and InfluxDB (https://github.com/grafana/grafana/)
 * **InfluxDB** - Used as database for storing rancher server metrics that rancher exports via the graphite connector (https://github.com/influxdata/influxdb)
 * **rancher-api-integration** - Allows Prometheus to access the Rancher API and return the status of any stack or service in the rancher environment associated with the API key used (https://github.com/Limilo/prometheus-rancher-exporter/)
-
+* **rancher-api-control** - Run once container to set the `graphite.host` variable in the Rancher API. By default, this setting is blank.
 
 ## Deployment:
 
 * Select Prometheus from the community catalog
-* Enter suitable API details to enable the API intergration
-* Configure your graphite.host through the rancher-api
-* Click deploy
+* Choose if you want to have your `graphite.host` value updated so that the rancher server statistics show on the dashboard.
+* Click Launch
 
-#### Setting up API Keys
+## Usage
 
-We need the API keys so that we can query rancher over it's API for service/stack/host status's.Log into your Rancher instance, make sure your in the correct environment and click the API button along the top of the page.
-Click on 'Add Key' and you should be presented with a box similar to the below, record down the details somewhere safe. These will be specified when deploying the catalog item.
+Once deployed, all the services should be green in Rancher and your new monitoring platform should be ready to use! Depending upon your specific implementation, you may need to open up the firewall for ports `9090` for Prometheus and `3000` for Grafana.
 
-![API Screen](https://github.com/Rucknar/Guide_Rancher_Monitoring/blob/master/API-Key.png "Creating a new API Key")
+* Prometheus will now be avaialble, running on port `9090`. Have a play around with some of the data. For more information on Prometheus - https://prometheus.io/docs/introduction/overview/
+* Grafana will now be available, running on port `3000`. I've added a number of dashboards to help get you started. Authentication is with the default `admin/admin`
 
-#### Configuring Rancher Graphite Support
+## Alerting
 
-The good chaps at Rancher expose a number of key metrics through a standard graphite compatible stream. Disabled by default and not widely known, this feature can be enabled by visiting `http://<SERVER_IP>:8080/v1/settings/graphite.host` and entering the host IP where you will run InfluxDB.
+Alerting can be acheived through making use of Prometheus's alert-manager container, i've not included it in the build at this stage but can easily be plugged in.
+
+## How is it done?
+
+#### API Integration
+
+We use API keys so that we can query rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana.
+To provide access to the API, We make use of the following lables in Rancher:
+```
+      io.rancher.container.create_agent: true
+      io.rancher.container.agent.role: environment
+```
+This API interaction means you can easily build service/stack status graphs for your key applications and expose them to a wider audience without needing to give them access to Rancher itsself.
+
+#### Rancher Graphite Support
+
+The good chaps at Rancher expose a number of key metrics through a standard graphite compatible stream. Disabled by default and not widely known, this feature can be enabled either through the provided `rancher-api-control` container or manually by visiting `http://<SERVER_IP>:8080/v1/settings/graphite.host` and entering the host IP where you InfluxDB runs.
 InfluxDB has a graphite connector pre-configured. I chose to do this rather than use graphite as eventually i'd like to store data from multiple sources in InfluxDB. Also, it should allow you to scale to a distrubuted cluster without much work.
 
 You should see something akin to the configuration below, update the `value` field to your servers address.
@@ -63,9 +78,7 @@ You should see something akin to the configuration below, update the `value` fie
 }
 ```
 
-## Usage
-* Grafana will now be available on, running on port 3000. I've added a number of dashboards to help get you started. Authentication is with the default `admin/admin`
-* Prometheus will now be avaialble, running on port 9090. Have a play around with some of the data. For more information on Prometheus - https://prometheus.io/docs/introduction/overview/
+Once completed, you will need to restart the rancher server container for the change to take effect, data will then be available for grafana. There is a pre-built dashboard exposing some of the useful metrics as an example.
 
 ## Troubleshooting
 
@@ -78,9 +91,9 @@ It can take a few minutes for this to come through sometimes, check the rancher 
 
 ## Ackwnoledgements
 
-*JamesBarwell* - For all his efforts first introducing me to Prometheus and for the original rancher-api integration.
-*JolyonBrown* - For his efforts in adding in further functionality to the API integration.
-*Rancher Labs* - For providing details on how to effectivley montior Rancher server.
+* **James Barwell** - For all his efforts first introducing me to Prometheus and for the original rancher-api integration.
+* **Jolyon Brown** - For his efforts in adding in further functionality to the API integration.
+* **Rancher Labs** - For providing details on how to effectivley montior Rancher server.
 
 And of course, all the guys behind *Prometheus/Grafana/InfluxDB* for making such great tools.
 
