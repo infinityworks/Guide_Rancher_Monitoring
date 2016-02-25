@@ -24,13 +24,13 @@ In this deployment the following technologies are utilised:
 * **Grafana** - Used to visualise the data from Prometheus and InfluxDB (https://github.com/grafana/grafana/)
 * **InfluxDB** - Used as database for storing rancher server metrics that rancher exports via the graphite connector (https://github.com/influxdata/influxdb)
 * **rancher-api-integration** - Allows Prometheus to access the Rancher API and return the status of any stack or service in the rancher environment associated with the API key used (https://github.com/Limilo/prometheus-rancher-exporter/)
-* **rancher-api-control** - Run once container to set the `graphite.host` variable in the Rancher API. By default, this setting is blank.
 
 ## Deployment:
 
 * Select Prometheus from the community catalog
-* Choose if you want to have your `graphite.host` value updated so that the rancher server statistics show on the dashboard. (WARNING, not currently working. Do manually)
 * Click Launch
+
+If you want statistics in grafana from the rancher instance itsself, follow the instructions below for 'Rancher Graphite Support'.
 
 ## Usage
 
@@ -57,7 +57,7 @@ This API interaction means you can easily build service/stack status graphs for 
 
 #### Rancher Graphite Support
 
-The good chaps at Rancher expose a number of key metrics through a standard graphite compatible stream. Disabled by default and not widely known, this feature can be enabled either through the provided `rancher-api-control` container or manually by visiting `http://<SERVER_IP>:8080/v1/settings/graphite.host` and entering the host IP where you InfluxDB runs.
+The good chaps at Rancher expose a number of key metrics through a standard graphite compatible stream. Disabled by default and not widely known, this feature can be enabled either through the provided `rancher-api-control` container or manually by visiting `http://<SERVER_IP>:8080/v1/settings/graphite.host` click edit from the top right and enter the host IP where InfluxDB has been deployed, once this is done you will need to restart the rancher server container for the changes to take effect.
 InfluxDB has a graphite connector pre-configured. I chose to do this rather than use graphite as eventually i'd like to store data from multiple sources in InfluxDB. Also, it should allow you to scale to a distrubuted cluster without much work.
 
 You should see something akin to the configuration below, update the `value` field to your servers address.
