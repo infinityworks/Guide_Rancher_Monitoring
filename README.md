@@ -29,7 +29,7 @@ In this deployment the following technologies are utilised:
 ## Deployment:
 
 * Select Prometheus from the community catalog
-* Choose if you want to have your `graphite.host` value updated so that the rancher server statistics show on the dashboard.
+* Choose if you want to have your `graphite.host` value updated so that the rancher server statistics show on the dashboard. (WARNING, not currently working. Do manually)
 * Click Launch
 
 ## Usage
