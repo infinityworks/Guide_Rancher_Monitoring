@@ -1,6 +1,7 @@
 # Guide_Rancher_Monitoring
 
 An easy to follow guide on deploying and making the best use of the Rancher community catalog template for Prometheus.
+** Updated for Rancher 1.2 **
 
 ![Catalog Entry](https://github.com/Rucknar/Guide_Rancher_Monitoring/blob/master/catalog-screen.png "Catalog Entry")
 
@@ -21,10 +22,10 @@ In this deployment the following technologies are utilised:
 
 * **Prometheus** - Used to scrape and store metrics from our data sources (https://github.com/prometheus/prometheus)
 * **Prometheus Node Exporter** - Gets host level metrics and exposes them to Prometheus (https://github.com/prometheus/node_exporter)
-* **Ranch-Eye** - Pre-configured lightwieght HAProxy to expose the cAdvisor stats used by Rancher's agent container, to Prometheus. (https://github.com/Rucknar/ranch-eye)
+* **cadvisor** - cAdvisor stats give us rich container level statistics. (https://github.com/Rucknar/ranch-eye)
 * **Grafana** - Used to visualise the data from Prometheus and InfluxDB (https://github.com/grafana/grafana/)
 * **InfluxDB** - Used as database for storing Rancher server metrics that rancher exports via the Graphite connector (https://github.com/influxdata/influxdb)
-* **rancher-api-integration** - Allows Prometheus to access the Rancher API and return the status of any stack or service in the Rancher environment associated with the API key used (https://github.com/Limilo/prometheus-rancher-exporter/)
+* **Proemtheus Rancher Exporter** - Allows Prometheus to access the Rancher API and return the status of any stack or service in the Rancher environment associated with the API key used (https://github.com/Limilo/prometheus-rancher-exporter/)
 
 ## Deployment:
 
