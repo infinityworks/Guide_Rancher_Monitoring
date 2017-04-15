@@ -1,4 +1,4 @@
-# Guide_Rancher_Monitoring
+# Monitoring Guide - Prometheus/Grafana/Rancher
 
 An easy to follow guide on deploying and making the best use of the Rancher community catalog template for Prometheus.
 ** Updated for Rancher 1.5.5+ and catalog entry version 3.0.0 **
@@ -47,7 +47,7 @@ Once deployed, all the services should be green in Rancher and your new monitori
 
 ### Alerting
 
-Alerting can be achieved through making use of Prometheus's alert-manager container, I've not included it in the build at this stage but this can easily be plugged in.
+Depending on preference, Alerting can be achieved through making use of Prometheus's alert-manager service, or through Grafana's own alerting capability. Alerts are a very bespoke output in most cases, as such i've not attempted to pre-bake anything into this guide or catalog item. The good news however is that both are good solutions and can be configured easily.
 
 ### Enabling Prometheus metrics for the Rancher Server
 
@@ -56,7 +56,9 @@ Alerting can be achieved through making use of Prometheus's alert-manager contai
 
 With those commands in-mind, starting a rancher server looks something akin to this:
 
-`sudo docker run -d --restart=unless-stopped -e CATTLE_PROMETHEUS_EXPORTER=true -p 8080:8080 -p 9108:9108 rancher/server`
+```
+sudo docker run -d --restart=unless-stopped -e CATTLE_PROMETHEUS_EXPORTER=true -p 8080:8080 -p 9108:9108 rancher/server
+```
 
 ## How is it Done?
 
@@ -75,10 +77,12 @@ This API interaction means you can easily build service/stack status graphs for 
 ## Troubleshooting
 
 **Expected Data is missing?**
+
 First, load up Prometheus on port 9090 and click on the status page at the top. This should show you the scrape status of all of your end-points.
 If everything looks good there, have a look at grafana and perform a test of it's data sources to ensure connectivity is there.
 
-**Rancher Server Metrics aren't showing in Grafana**
+**Rancher Server Metrics aren't showing in Grafana?**
+
 Have you followed the steps listed for 'Enabling Prometheus metrics for the Rancher Server'? If so, you might want to check that your mapping through the port correctly.
 
 ## Acknowledgements
