@@ -3,7 +3,7 @@
 An easy to follow guide on deploying and making the best use of the Rancher community catalog template for Prometheus.
 ** Updated for Rancher 1.5.5+ and catalog entry version 3.0.0 **
 
-![Screens](screebs.png "Grafana Dashboards")
+![Screens](screens.png "Grafana Dashboards")
 
 ## Objectives
 
