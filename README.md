@@ -1,15 +1,15 @@
-# Guide_Rancher_Monitoring
+# Monitoring Guide - Prometheus/Grafana/Rancher
 
 An easy to follow guide on deploying and making the best use of the Rancher community catalog template for Prometheus.
-** Updated for Rancher 1.2 **
+**Updated for Rancher 1.5.5+ and catalog entry version 3.0.0**
 
-![Catalog Entry](https://github.com/Rucknar/Guide_Rancher_Monitoring/blob/master/catalog-screen.png "Catalog Entry")
+![Screens](screens.png "Grafana Dashboards")
 
 ## Objectives
 
-In the last few years, the quality of products available to monitor your systems and services has increased dramatically. The adoption of technologies such as Docker has enabled us to lower the barrier for running these cool new technologies.
-With this in mind, I put together this auto-discovering monitoring platform to demonstrate what can be done, and to get people using these great products.
-The solution is built around monitoring a Docker environment under the control of Rancher. If your not familiar with Rancher then i'd recommend checking out www.rancher.com for more information.
+Over the last few years, the quality of products available to monitor your systems and services has increased dramatically. The adoption of technologies such as Docker has enabled us to lower the barrier for running these cool new technologies.
+
+With this in mind, I put together this auto-discovering monitoring platform to demonstrate what can be done, and to get people using these great products. The solution is built around monitoring a Docker environment under the control of Rancher. If your not familiar with Rancher then i'd recommend checking out their [website](www.rancher.com) for more information.
 
 Rancher provides a community catalog where people can submit example technology stacks that allow people to get up and running within minutes.
 I've chosen to leverage this and have submitted this build as a pull-request to Rancher for incoporation into their catalog.
@@ -18,84 +18,78 @@ All that aside, it's been a cool personal project to work on, and gives me an op
 
 ## Technologies
 
-In this deployment the following technologies are utilised:
+In this catalog item, the following technologies are utilised to make this as useful as possible;
 
-* **Prometheus** - Used to scrape and store metrics from our data sources (https://github.com/prometheus/prometheus)
-* **Prometheus Node Exporter** - Gets host level metrics and exposes them to Prometheus (https://github.com/prometheus/node_exporter)
-* **cadvisor** - cAdvisor stats give us rich container level statistics. (https://github.com/Rucknar/ranch-eye)
-* **Grafana** - Used to visualise the data from Prometheus and InfluxDB (https://github.com/grafana/grafana/)
-* **InfluxDB** - Used as database for storing Rancher server metrics that rancher exports via the Graphite connector (https://github.com/influxdata/influxdb)
-* **Proemtheus Rancher Exporter** - Allows Prometheus to access the Rancher API and return the status of any stack or service in the Rancher environment associated with the API key used (https://github.com/Limilo/prometheus-rancher-exporter/)
+* [Prometheus](https://github.com/prometheus/prometheus) - Used to scrape and store metrics from our data sources.
+* [Prometheus Node Exporter](https://github.com/prometheus/node_exporter) - Gets host level metrics and exposes them to Prometheus.
+* [cAdvisor](https://github.com/google/cadvisor) - Deploys and Exposes the cadvsior stats used by Rancher's agent container, to Prometheus.
+* [Grafana](https://github.com/grafana/grafana/) - Used to visualise the data from Prometheus and InfluxDB.
+* [Prometheus Rancher Exporter](https://github.com/infinityworksltd/prometheus-rancher-exporter/) - Allows Prometheus to access the Rancher API and return the status of any stack or service in the rancher environment associated with the API key used.
 
-## Deployment:
+## Deployment
 
-* Select Prometheus from the community catalog
-* Click Launch
+### Pre-Requisites
 
-If you want statistics in Grafana from the Rancher instance itsself, follow the instructions below for 'Rancher Graphite Support'.
+This template will work out of the box to give you host and container monitoring through numerous sources. If you also wish to monitor the Rancher server its-self, prometheus metrics need enabling for the server instance. Details on how to do this are listed below.
 
-## Usage
+### Deployment Steps:
+
+1. Select Prometheus from the community catalog.
+2. Enter the IP Address of your Rancher server (used for accessing Ranchers own metrics, optional)
+3. Click deploy.
+
+### Usage
 
 Once deployed, all the services should be green in Rancher and your new monitoring platform should be ready to use! Depending upon your specific implementation, you may need to open up the firewall for ports `9090` for Prometheus and `3000` for Grafana.
 
-* Prometheus will now be avaialble, running on port `9090`. Have a play around with some of the data. For more information on Prometheus - https://prometheus.io/docs/introduction/overview/
+* Prometheus will now be available, running on port 9090. Have a play around with some of the data. For more information on Prometheus, check out their [documentation](https://prometheus.io/docs/introduction/overview/).
 * Grafana will now be available, running on port `3000`. I've added a number of dashboards to help get you started. Authenticate with the default `admin/admin` account and password
 
-## Alerting
+### Alerting
 
-Alerting can be achieved through making use of Prometheus's alert-manager container, I've not included it in the build at this stage but this can easily be plugged in.
+Depending on preference, Alerting can be achieved through making use of Prometheus's alert-manager service, or through Grafana's own alerting capability. Alerts are a very bespoke output in most cases, as such i've not attempted to pre-bake anything into this guide or catalog item. The good news however is that both are good solutions and can be configured easily.
+
+### Enabling Prometheus metrics for the Rancher Server
+
+1. Set the environment variable `CATTLE_PROMETHEUS_EXPORTER` to `true` for the Rancher server container.
+2. Expose the metric port on the container as such `-p 9108:9108` so that prometheus can scrape the container
+
+With those commands in-mind, starting a rancher server looks something akin to this:
+
+```
+sudo docker run -d --restart=unless-stopped -e CATTLE_PROMETHEUS_EXPORTER=true -p 8080:8080 -p 9108:9108 rancher/server
+```
 
 ## How is it Done?
 
 #### API Integration
 
-We use API keys so that we can query Rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana.
+We use API keys so that we can query Rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana. The actual process doing this is called the [prometheus-rancher-exporter](github.com/infinityworksltd/prometheus-rancher-exporter).
+
 To provide access to the API, We make use of the following lables in Rancher:
 ```
       io.rancher.container.create_agent: true
       io.rancher.container.agent.role: environment
 ```
+
 This API interaction means you can easily build service/stack status graphs for your key applications and expose them to a wider audience without needing to give them access to Rancher itsself.
-
-#### Rancher Graphite Support
-
-The good chaps at Rancher expose a number of key metrics through a standard graphite compatible stream. Disabled by default and not widely known, this feature can be enabled either through the provided `rancher-api-control` container or manually by visiting `http://<SERVER_IP>:8080/v1/settings/graphite.host` clicking edit from the top right and entering the host IP where InfluxDB has been deployed. Once this is done you will need to restart the rancher server container for the changes to take effect.
-InfluxDB has a Graphite connector pre-configured. I chose to do this rather than use Graphite as eventually I'd like to store data from multiple sources in InfluxDB. Also, it should allow you to scale to a distributed cluster without much work.
-
-You should see something akin to the configuration below, update the `value` field to your server's address.
-
-```
-{
-		"id": "1as!graphite.host",
-		"type": "activeSetting",
-		"links": {
-		"self": "…/v1/activesettings/1as!graphite.host",
-		},
-		"actions": { },
-		"name": "graphite.host",
-		"activeValue": "",
-		"inDb": false,
-		"source": "Code Packaged Defaults",
-		"value": “XXX.XXX.XXX.XXX”,
-}
-```
-
-Once completed, you will need to restart the Rancher server container for the change to take effect, data will then be available for Grafana. There is a pre-built dashboard exposing some of the useful metrics as an example.
 
 ## Troubleshooting
 
 **Expected Data is missing?**
+
 First, load up Prometheus on port 9090 and click on the status page at the top. This should show you the scrape status of all of your end-points.
 If everything looks good there, have a look at grafana and perform a test of it's data sources to ensure connectivity is there.
 
-**Rancher Graphite feed isn't working**
-It can take a few minutes for this to come through sometimes, check the Rancher server logs for any errors in connecting to the endpoint.
+**Rancher Server Metrics aren't showing in Grafana?**
+
+Have you followed the steps listed for 'Enabling Prometheus metrics for the Rancher Server'? If so, you might want to check that your mapping through the port correctly.
 
 ## Acknowledgements
 
 * **James Barwell** - For all his efforts first introducing me to Prometheus and for the original rancher-api integration.
 * **Jolyon Brown** - For his efforts in adding in further functionality to the API integration.
-* **Rancher Labs** - For providing details on how to effectivley montior Rancher server.
+* **Rancher Labs** - For providing awesome support and details on how to effectivley montior Rancher server.
 
-And of course, all the guys behind *Prometheus/Grafana/InfluxDB* for making such great tools.
+And of course, all the guys behind *Prometheus/Grafana* for making such great tools.
 
