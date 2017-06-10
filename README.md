@@ -9,7 +9,7 @@ An easy to follow guide on deploying and making the best use of the Rancher comm
 
 Over the last few years, the quality of products available to monitor your systems and services has increased dramatically. The adoption of technologies such as Docker has enabled us to lower the barrier for running these cool new technologies.
 
-With this in mind, I put together this auto-discovering monitoring platform to demonstrate what can be done, and to get people using these great products. The solution is built around monitoring a Docker environment under the control of Rancher. If your not familiar with Rancher then i'd recommend checking out their [website](www.rancher.com) for more information.
+With this in mind, I put together this auto-discovering monitoring platform to demonstrate what can be done, and to get people using these great products. The solution is built around monitoring a Docker environment under the control of Rancher. If your not familiar with Rancher then i'd recommend checking out their [website](http://rancher.com) for more information.
 
 Rancher provides a community catalog where people can submit example technology stacks that allow people to get up and running within minutes.
 I've chosen to leverage this and have submitted this build as a pull-request to Rancher for incoporation into their catalog.
@@ -64,7 +64,7 @@ sudo docker run -d --restart=unless-stopped -e CATTLE_PROMETHEUS_EXPORTER=true -
 
 #### API Integration
 
-We use API keys so that we can query Rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana. The actual process doing this is called the [prometheus-rancher-exporter](github.com/infinityworksltd/prometheus-rancher-exporter).
+We use API keys so that we can query Rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana. The actual process doing this is called the [prometheus-rancher-exporter](https://github.com/infinityworksltd/prometheus-rancher-exporter).
 
 To provide access to the API, We make use of the following lables in Rancher:
 ```
