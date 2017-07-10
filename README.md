@@ -24,7 +24,7 @@ In this catalog item, the following technologies are utilised to make this as us
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter) - Gets host level metrics and exposes them to Prometheus.
 * [cAdvisor](https://github.com/google/cadvisor) - Deploys and Exposes the cadvsior stats used by Rancher's agent container, to Prometheus.
 * [Grafana](https://github.com/grafana/grafana/) - Used to visualise the data from Prometheus and InfluxDB.
-* [Prometheus Rancher Exporter](https://github.com/infinityworksltd/prometheus-rancher-exporter/) - Allows Prometheus to access the Rancher API and return the status of any stack or service in the rancher environment associated with the API key used.
+* [Prometheus Rancher Exporter](https://github.com/infinityworks/prometheus-rancher-exporter/) - Allows Prometheus to access the Rancher API and return the status of any stack or service in the rancher environment associated with the API key used.
 
 ## Deployment
 
@@ -64,7 +64,7 @@ sudo docker run -d --restart=unless-stopped -e CATTLE_PROMETHEUS_EXPORTER=true -
 
 #### API Integration
 
-We use API keys so that we can query Rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana. The actual process doing this is called the [prometheus-rancher-exporter](https://github.com/infinityworksltd/prometheus-rancher-exporter).
+We use API keys so that we can query Rancher over it's API for service/stack/host status's, an example of this is through the Prometheus Dashboard in Grafana. The actual process doing this is called the [prometheus-rancher-exporter](https://github.com/infinityworks/prometheus-rancher-exporter).
 
 To provide access to the API, We make use of the following lables in Rancher:
 ```
